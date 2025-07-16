@@ -1,0 +1,27 @@
+<div class="login-container">
+    <img src="assets/sri-amman-labour-body-works-logo.svg.png" alt="ABW Logo" class="login-logo" />
+  
+    <h2 class="login-title">Log in with Phone Number</h2>
+  
+    <form (submit)="login()" class="login-form">
+      <div class="input-group">
+        <span class="flag">🇮🇳</span>
+        <input
+          type="tel"
+          maxlength="10"
+          [(ngModel)]="mobileNumber"
+          name="mobile"
+          placeholder="Enter your mobile number"
+          required
+        />
+      </div>
+  
+      <div class="remember-me">
+        <input type="checkbox" [(ngModel)]="rememberMe" name="rememberMe" />
+        <label>Remember me</label>
+      </div>
+  
+      <button type="submit">Log in</button>
+    </form>
+  </div>
+  
