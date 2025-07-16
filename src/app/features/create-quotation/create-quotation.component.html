@@ -1,71 +1,89 @@
 <div class="quotation-container">
   <h2>Create Quotation</h2>
-
   <form #quotationForm="ngForm">
-    <!-- Customer Details -->
+
+    <!-- Customer Info -->
     <div class="section">
-      <label>Company Name:</label>
-      <input type="text" [(ngModel)]="customer.companyName" name="companyName" required />
+      <div class="form-row">
+        <div class="form-group with-icon">
+          <label>Company Name:</label>
+          <div class="input-icon">
+            <i class="fas fa-building"></i>
+            <input type="text" [(ngModel)]="customer.companyName" name="companyName" required />
+          </div>
+        </div>
 
-      <label>Address:</label>
-      <textarea [(ngModel)]="customer.address" name="address" required></textarea>
+        <div class="form-group with-icon">
+          <label>Contact No.:</label>
+          <div class="input-icon">
+            <i class="fas fa-phone"></i>
+            <input type="tel" [(ngModel)]="customer.contact" name="contact" required />
+          </div>
+        </div>
+      </div>
 
-      <label>Contact No.:</label>
-      <input type="tel" [(ngModel)]="customer.contact" name="contact" required />
+      <div class="form-row">
+        <div class="form-group with-icon">
+          <label>Address:</label>
+          <div class="input-icon">
+            <i class="fas fa-location-dot"></i>
+            <textarea [(ngModel)]="customer.address" name="address" required></textarea>
+          </div>
+        </div>
 
-      <label>GST Number:</label>
-      <input type="tel" [(ngModel)]="customer.gstNumber" name="contact" required />
-
-      
+        <div class="form-group with-icon">
+          <label>GST Number:</label>
+          <div class="input-icon">
+            <i class="fas fa-file-invoice"></i>
+            <input type="text" [(ngModel)]="customer.gstNumber" name="gstNumber" />
+          </div>
+        </div>
+      </div>
     </div>
 
-  <!-- Quotation Items -->
-<div class="section">
-  <h3>Items</h3>
- <!-- Table Header Row -->
-<div class="item-header">
-  <span>#</span>
-  <span>Item Name</span>
-  <span>HSN/SAC</span>
-  <span>Qty</span>
-  <span>Unit</span>
-  <span>Price/Unit</span>
-  <span>Amount</span>
-  <span>Remove</span>
-</div>
+    <!-- Quotation Items -->
+    <div class="section">
+      <h3>Items</h3>
 
-<!-- Item Input Rows -->
-<div *ngFor="let item of items; let i = index" class="item-row">
+      <div class="item-table">
+        <div class="item-header">
+          <span>#</span>
+          <span>Item Name</span>
+          <span>HSN/SAC</span>
+          <span>Qty</span>
+          <span>Unit</span>
+          <span>Price/Unit</span>
+          <span>Amount</span>
+          <span>Remove</span>
+        </div>
+
+    <div class="item-row" *ngFor="let item of items; let i = index">
   <span>{{ i + 1 }}</span>
   <input type="text" [(ngModel)]="item.name" name="itemName{{i}}" placeholder="Item Name" required />
   <input type="text" [(ngModel)]="item.hsn" name="hsn{{i}}" placeholder="HSN/SAC" />
   <input type="number" [(ngModel)]="item.quantity" name="quantity{{i}}" placeholder="Qty" (input)="updateTotal()" />
   <input type="text" [(ngModel)]="item.unit" name="unit{{i}}" placeholder="Unit" />
-  <input type="number" [(ngModel)]="item.unitPrice" name="unitPrice{{i}}" placeholder="Unit Price" (input)="updateTotal()" />
-  <p class="amount">₹ {{ item.quantity * item.unitPrice | number: '1.2-2' }}</p>
-  <button type="button" (click)="removeItem(i)" class="remove-btn">❌</button>
+  <input type="number" [(ngModel)]="item.unitPrice" name="unitPrice{{i}}" placeholder="Price/Unit" (input)="updateTotal()" />
+  <div class="amount">₹ {{ (item.quantity * item.unitPrice) || 0 | number: '1.2-2' }}</div>
+  <button type="button" (click)="removeItem(i)" class="remove-btn">
+    <i class="fas fa-trash-alt"></i>
+  </button>
 </div>
-<button type="button" (click)="addItem()">+ Add Item</button>
-</div>
 
+      </div>
 
-    <!-- Totals -->
-    <!-- <div class="section">
-      <p><strong>Total (Before GST):</strong> ₹ {{ total | number: '1.2-2' }}</p>
-      <p><strong>GST &#64;18%:</strong> ₹ {{ total * 0.18 | number: '1.2-2' }}</p>
-      <p><strong>Total (Including GST):</strong> ₹ {{ total + (total * 0.18) | number: '1.2-2' }}</p>
-      <p><strong>Amount in Words:</strong> {{ totalInWords }}</p>
-    </div> -->
+      <button type="button" (click)="addItem()">+ Add Item</button>
+    </div>
 
-    <!-- Description -->
+    <!-- Payment Terms -->
     <div class="section">
-      <label for="description"><strong>Payment Terms:</strong></label>
-      <textarea id="description" [(ngModel)]="description" name="description" rows="3" class="form-control"></textarea>
+      <label><strong>Payment Terms:</strong></label>
+      <textarea [(ngModel)]="description" name="description" rows="3"></textarea>
     </div>
 
     <!-- Submit -->
     <div class="section">
-      <button type="button" (click)="generatePDF()">Generate PDF</button>
+      <button type="button" (click)="generatePDF()">Generate Quotation</button>
     </div>
   </form>
 </div>

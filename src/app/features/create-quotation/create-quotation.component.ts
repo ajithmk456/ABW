@@ -17,7 +17,7 @@ export class CreateQuotationComponent {
     companyName: '',
     address: '',
     contact: '',
-    gstNumber:''
+    gstNumber: ''
   };
 
   items = [
@@ -50,17 +50,24 @@ export class CreateQuotationComponent {
     const rupees = formatter.format(amount).replace('₹', '').trim();
     return `${rupees} Rupees only`;
   }
+  getAmount(item: any): string {
+    const qty = Number(item.quantity) || 0;
+    const price = Number(item.unitPrice) || 0;
+    const total = qty * price;
+    return total.toFixed(2);
+  }
+
   generatePDF() {
     let estimateNumber = localStorage.getItem('lastEstimateNo');
     let nextNumber = estimateNumber ? parseInt(estimateNumber) + 1 : 1;
     localStorage.setItem('lastEstimateNo', nextNumber.toString());
-  
+
     const estimateCode = `ABW_${nextNumber.toString().padStart(2, '0')}`;
     const total = this.total;
-  
+
     const documentDefinition = {
       pageMargins: [40, 40, 40, 60],
-  
+
       background: function (_: number, pageSize: { width: number; height: number }) {
         return {
           image: LOGO_BASE64,
@@ -69,7 +76,7 @@ export class CreateQuotationComponent {
           absolutePosition: { x: (pageSize.width - 200) / 2, y: 100 }
         };
       },
-  
+
       content: [
         {
           columns: [
@@ -101,7 +108,7 @@ export class CreateQuotationComponent {
           columnGap: 10,
           margin: [0, 0, 0, 20]
         },
-  
+
         {
           stack: [
             { text: 'Estimate For:', bold: true, margin: [0, 5, 0, 2] },
@@ -112,7 +119,7 @@ export class CreateQuotationComponent {
           ],
           style: 'customer'
         },
-  
+
         {
           table: {
             headerRows: 1,
@@ -143,7 +150,7 @@ export class CreateQuotationComponent {
           },
           margin: [0, 0, 0, 10]
         },
-  
+
         {
           columns: [
             { text: '' },
@@ -163,7 +170,7 @@ export class CreateQuotationComponent {
           ],
           margin: [0, 0, 0, 10]
         },
-  
+
         {
           text: [
             { text: 'Amount in Words: ', bold: true },
@@ -171,10 +178,10 @@ export class CreateQuotationComponent {
           ],
           margin: [0, 0, 0, 10]
         },
-  
+
         { text: 'Payment Terms:', bold: true, margin: [0, 0, 0, 2] },
         { text: this.description, margin: [0, 0, 0, 10] },
-  
+
         // ✅ Bank details and signature block without QR
         {
           table: {
@@ -207,7 +214,7 @@ export class CreateQuotationComponent {
           margin: [0, 30, 0, 0]
         }
       ],
-  
+
       styles: {
         quoteTitle: {
           fontSize: 20,
@@ -231,28 +238,15 @@ export class CreateQuotationComponent {
           margin: [0, 0, 0, 10]
         }
       },
-  
+
       defaultStyle: {
         fontSize: 10,
         lineHeight: 1.2
       }
     };
-  
+
     const safeCompanyName = this.customer.companyName.toUpperCase().replace(/\s+/g, '_');
     const fileName = `${safeCompanyName}_Quotation_${estimateCode}.pdf`;
     pdfMake.createPdf(documentDefinition).download(fileName);
   }
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 }

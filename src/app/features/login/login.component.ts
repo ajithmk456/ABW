@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, NgZone } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
@@ -19,23 +19,27 @@ export class LoginComponent {
     { name: 'Nagaraj', mobile: '8015333008'}
   ];
 
-  constructor(private router: Router) {}
 
-  login() {
-    const user = this.users.find(u => u.mobile === this.mobileNumber.trim());
+constructor(private router: Router) {
 
-    if (user) {
-      alert(`Welcome ${user.name}`);
-      
-      // Optional: store login session
-      if (this.rememberMe) {
-        localStorage.setItem('loggedInUser', JSON.stringify(user));
-      }
+    localStorage.removeItem('loggedInUser');
+    localStorage.removeItem('rememberMe'); // if you're using this too
 
-      // Redirect to quotation
-      this.router.navigate(['/dashboard']);
-    } else {
-      alert('Login failed. Mobile number not recognized.');
-    }
+}
+
+login() {
+  const user = this.users.find(u => u.mobile === this.mobileNumber.trim());
+
+  if (user) {
+
+    //  Always store for AuthGuard to recognize login
+    localStorage.setItem('loggedInUser', JSON.stringify(user));
+
+    this.router.navigate(['/dashboard']);
+  } else {
+    alert('Login failed. Mobile number not recognized.');
   }
+}
+
+
 }

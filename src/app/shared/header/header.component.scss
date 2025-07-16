@@ -1,0 +1,48 @@
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 2rem;
+  background-color: #1e3a8a; // dark blue background
+  color: white;
+
+  .logo {
+    font-size: 1.5rem;
+    font-weight: bold;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 1.5rem;
+    margin-left: 2rem;
+
+    a {
+      color: white;
+      text-decoration: none;
+      font-weight: 500;
+
+      &.active {
+        border-bottom: 2px solid #facc15; // yellow highlight
+      }
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+
+  .logout-btn {
+    background-color: transparent;
+    color: white;
+    border: 1px solid #f87171;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: #f87171;
+      color: white;
+    }
+  }
+}
