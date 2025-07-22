@@ -28,7 +28,17 @@ export class GenerateBillComponent {
   description = '85% payment advance';
   total = 0;
   totalInWords = '';
-  isTamilNaduBill = true; // default to Tamil Nadu billing
+  isTamilNaduBill = true; // default to Tamil Nadu 
+
+  selectedDate: string = ''; // YYYY-MM-DD
+  finalInvoiceDate: string = ''; // Used in PDF
+  invoiceCodes: string = '';
+
+  onDateChange() {
+    const date = new Date(this.selectedDate);
+    const formatted = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    this.finalInvoiceDate = formatted;
+  }
 
   addItem() {
     this.items.push({ name: '', hsn: '', quantity: 1, unit: '', unitPrice: 0 });
@@ -66,11 +76,11 @@ export class GenerateBillComponent {
     const isTamilNadu = this.isTamilNaduBill;
     const totalWithGST = isTamilNadu ? this.total + cgst + sgst : this.total + gstAmount;
 
-    let invoiceNumber = localStorage.getItem('lastInvoiceNo');
-    let nextNumber = invoiceNumber ? parseInt(invoiceNumber) + 1 : 1;
-    localStorage.setItem('lastInvoiceNo', nextNumber.toString());
+    // let invoiceNumber = localStorage.getItem('lastInvoiceNo');
+    // let nextNumber = invoiceNumber ? parseInt(invoiceNumber) + 1 : 1;
+    // localStorage.setItem('lastInvoiceNo', nextNumber.toString());
 
-    const invoiceCode = `ABW_${nextNumber.toString().padStart(2, '0')}`;
+    const invoiceCode = `ABW_${this.invoiceCodes.toString().padStart(2, '0')}`;
 
     const documentDefinition = {
       pageMargins: [40, 40, 40, 60],
@@ -109,7 +119,7 @@ export class GenerateBillComponent {
               width: 'auto',
               stack: [
                 { text: `Invoice No: ${invoiceCode}`, alignment: 'right' },
-                { text: `Date: ${new Date().toLocaleDateString('en-GB')}`, alignment: 'right' }
+                { text: `Date: ${this.finalInvoiceDate || new Date().toLocaleDateString('en-GB')}`, alignment: 'right' }
               ]
             }
           ],
@@ -164,16 +174,16 @@ export class GenerateBillComponent {
                 widths: ['*', 'auto'],
                 body: isTamilNadu
                   ? [
-                      ['Sub Total', `₹ ${this.total.toFixed(2)}`],
-                      ['CGST @9%', `₹ ${cgst.toFixed(2)}`],
-                      ['SGST @9%', `₹ ${sgst.toFixed(2)}`],
-                      [{ text: 'Total', bold: true }, { text: `₹ ${totalWithGST.toFixed(2)}`, bold: true }]
-                    ]
+                    ['Sub Total', `₹ ${this.total.toFixed(2)}`],
+                    ['CGST @9%', `₹ ${cgst.toFixed(2)}`],
+                    ['SGST @9%', `₹ ${sgst.toFixed(2)}`],
+                    [{ text: 'Total', bold: true }, { text: `₹ ${totalWithGST.toFixed(2)}`, bold: true }]
+                  ]
                   : [
-                      ['Sub Total', `₹ ${this.total.toFixed(2)}`],
-                      ['IGST @18%', `₹ ${gstAmount.toFixed(2)}`],
-                      [{ text: 'Total', bold: true }, { text: `₹ ${totalWithGST.toFixed(2)}`, bold: true }]
-                    ]
+                    ['Sub Total', `₹ ${this.total.toFixed(2)}`],
+                    ['IGST @18%', `₹ ${gstAmount.toFixed(2)}`],
+                    [{ text: 'Total', bold: true }, { text: `₹ ${totalWithGST.toFixed(2)}`, bold: true }]
+                  ]
               },
               layout: {
                 hLineWidth: () => 0.8,
@@ -264,7 +274,7 @@ export class GenerateBillComponent {
       }
     };
 
-    const safeCompanyName = this.customer.companyName.toUpperCase().replace(/\s+/g, '_');
+    const safeCompanyName = this.customer.companyName.toLowerCase().replace(/\s+/g, '_');
     const fileName = `${safeCompanyName}_invoice_${invoiceCode}.pdf`;
     pdfMake.createPdf(documentDefinition).download(fileName);
   }

@@ -2,99 +2,124 @@
   <h2>Create Invoice</h2>
 
   <form #quotationForm="ngForm">
- <!-- Customer Info -->
-<div class="section">
-  <div class="form-row">
-    <div class="form-group with-icon">
-      <label>Company Name:</label>
-      <div class="input-icon">
-        <i class="fas fa-building"></i>
-        <input type="text" [(ngModel)]="customer.companyName" name="companyName" required />
+    <!-- Customer Info -->
+    <div class="section">
+      <!-- Invoice Date Section -->
+      <div class="section">
+        <div class="form-row">
+          <div class="form-group with-icon">
+            <label>Invoice Date:</label>
+            <div class="input-icon">
+              <i class="fas fa-calendar-alt"></i>
+              <input type="date" [(ngModel)]="selectedDate" name="selectedDate" (change)="onDateChange()" />
+            </div>
+          </div>
+
+          <div class="form-group with-icon">
+            <label>Invoice Number:</label>
+            <div class="input-icon">
+              <i class="fas fa-file-invoice"></i>
+              <input type="text" [(ngModel)]="invoiceCodes" name="invoiceCode" />
+            </div>
+          </div>
+
+
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group with-icon">
+          <label>Company Name:</label>
+          <div class="input-icon">
+            <i class="fas fa-building"></i>
+            <input type="text" [(ngModel)]="customer.companyName" name="companyName" required />
+          </div>
+        </div>
+
+        <div class="form-group with-icon">
+          <label>Contact No:</label>
+          <div class="input-icon">
+            <i class="fas fa-phone"></i>
+            <input type="tel" [(ngModel)]="customer.contact" name="contact" required />
+          </div>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group with-icon">
+          <label>Address:</label>
+          <div class="input-icon">
+            <i class="fas fa-location-dot"></i>
+            <textarea [(ngModel)]="customer.address" name="address" required></textarea>
+          </div>
+        </div>
+
+        <div class="form-group with-icon">
+          <label>GST Number:</label>
+          <div class="input-icon">
+            <i class="fas fa-file-invoice"></i>
+            <input type="text" [(ngModel)]="customer.gstNumber" name="gstNumber" />
+          </div>
+        </div>
       </div>
     </div>
 
-    <div class="form-group with-icon">
-      <label>Contact No:</label>
-      <div class="input-icon">
-        <i class="fas fa-phone"></i>
-        <input type="tel" [(ngModel)]="customer.contact" name="contact" required />
+
+    <div class="section">
+      <label><strong>Billing State:</strong></label>
+      <div class="billing-radio-group no-wrap">
+        <label class="radio-option">
+          <input type="radio" [(ngModel)]="isTamilNaduBill" name="billingState" [value]="true" />
+          <span><strong>Tamil Nadu</strong> <small>(CGST + SGST)</small></span>
+        </label>
+
+        <label class="radio-option">
+          <input type="radio" [(ngModel)]="isTamilNaduBill" name="billingState" [value]="false" />
+          <span><strong>Other State</strong> <small>(IGST)</small></span>
+        </label>
       </div>
     </div>
-  </div>
-
-  <div class="form-row">
-    <div class="form-group with-icon">
-      <label>Address:</label>
-      <div class="input-icon">
-        <i class="fas fa-location-dot"></i>
-        <textarea [(ngModel)]="customer.address" name="address" required></textarea>
-      </div>
-    </div>
-
-    <div class="form-group with-icon">
-      <label>GST Number:</label>
-      <div class="input-icon">
-        <i class="fas fa-file-invoice"></i>
-        <input type="text" [(ngModel)]="customer.gstNumber" name="gstNumber" />
-      </div>
-    </div>
-  </div>
-</div>
-
-
-<div class="section">
-  <label><strong>Billing State:</strong></label>
-  <div class="billing-radio-group no-wrap">
-    <label class="radio-option">
-      <input type="radio" [(ngModel)]="isTamilNaduBill" name="billingState" [value]="true" />
-      <span><strong>Tamil Nadu</strong> <small>(CGST + SGST)</small></span>
-    </label>
-
-    <label class="radio-option">
-      <input type="radio" [(ngModel)]="isTamilNaduBill" name="billingState" [value]="false" />
-      <span><strong>Other State</strong> <small>(IGST)</small></span>
-    </label>
-  </div>
-</div>
 
 
 
 
     <!-- Items -->
-<!-- Invoice Items -->
-<div class="section">
-  <h3>Items</h3>
+    <!-- Invoice Items -->
+    <div class="section">
+      <h3>Items</h3>
 
-  <div class="item-table">
-    <!-- Header Row -->
-    <div class="item-header">
-      <span>#</span>
-      <span>Item Name</span>
-      <span>HSN/SAC</span>
-      <span>Qty</span>
-      <span>Unit</span>
-      <span>Price/Unit</span>
-      <span>Amount</span>
-      <span>Remove</span>
+      <div class="item-table">
+        <!-- Header Row -->
+        <div class="item-header">
+          <span>#</span>
+          <span>Item Name</span>
+          <span>HSN/SAC</span>
+          <span>Qty</span>
+          <span>Unit</span>
+          <span>Price/Unit</span>
+          <span>Amount</span>
+          <span>Remove</span>
+        </div>
+
+        <!-- Item Rows -->
+        <div *ngFor="let item of items; let i = index" class="item-row">
+          <span style="margin-bottom: 20px;">{{ i + 1 }}</span>
+          <input type="text" [(ngModel)]="item.name" name="itemName{{i}}" placeholder="Item Name" required />
+          <input type="text" [(ngModel)]="item.hsn" name="hsn{{i}}" placeholder="HSN/SAC" />
+          <input type="number" [(ngModel)]="item.quantity" name="quantity{{i}}" placeholder="Qty"
+            (input)="updateTotal()" />
+          <input type="text" [(ngModel)]="item.unit" name="unit{{i}}" placeholder="Unit" />
+          <input type="number" [(ngModel)]="item.unitPrice" name="unitPrice{{i}}" placeholder="Price/Unit"
+            (input)="updateTotal()" />
+          <div class="amount">₹ {{ (item.quantity * item.unitPrice) || 0 | number: '1.2-2' }}</div>
+          <button type="button" (click)="removeItem(i)" class="remove-btn">
+            <i class="fas fa-trash-alt"></i>
+          </button>
+        </div>
+      </div>
+
+      <button type="button" (click)="addItem()">+ Add Item</button>
     </div>
-
-    <!-- Item Rows -->
-    <div *ngFor="let item of items; let i = index" class="item-row">
-      <span  style="margin-bottom: 20px;">{{ i + 1 }}</span>
-      <input type="text" [(ngModel)]="item.name" name="itemName{{i}}" placeholder="Item Name" required />
-      <input type="text" [(ngModel)]="item.hsn" name="hsn{{i}}" placeholder="HSN/SAC" />
-      <input type="number" [(ngModel)]="item.quantity" name="quantity{{i}}" placeholder="Qty" (input)="updateTotal()" />
-      <input type="text" [(ngModel)]="item.unit" name="unit{{i}}" placeholder="Unit" />
-      <input type="number" [(ngModel)]="item.unitPrice" name="unitPrice{{i}}" placeholder="Price/Unit" (input)="updateTotal()" />
-      <div class="amount">₹ {{ (item.quantity * item.unitPrice) || 0 | number: '1.2-2' }}</div>
-      <button type="button" (click)="removeItem(i)" class="remove-btn">
-        <i class="fas fa-trash-alt"></i>
-      </button>
-    </div>
-  </div>
-
-  <button type="button" (click)="addItem()">+ Add Item</button>
-</div>
 
 
     <!-- Totals -->

@@ -28,6 +28,16 @@ export class CreateQuotationComponent {
   total = 0;
   totalInWords = '';
 
+  selectedDate: string = ''; // YYYY-MM-DD
+  finalQuotationDate: string = ''; // Used in PDF
+  quotationCodes: string = '';
+
+  onDateChange() {
+    const date = new Date(this.selectedDate);
+    const formatted = `${String(date.getDate()).padStart(2, '0')}.${String(date.getMonth() + 1).padStart(2, '0')}.${date.getFullYear()}`;
+    this.finalQuotationDate = formatted;
+  }
+
   addItem() {
     this.items.push({ name: '', hsn: '', quantity: 1, unit: '', unitPrice: 0 });
   }
@@ -58,11 +68,7 @@ export class CreateQuotationComponent {
   }
 
   generatePDF() {
-    let estimateNumber = localStorage.getItem('lastEstimateNo');
-    let nextNumber = estimateNumber ? parseInt(estimateNumber) + 1 : 1;
-    localStorage.setItem('lastEstimateNo', nextNumber.toString());
-
-    const estimateCode = `ABW_${nextNumber.toString().padStart(2, '0')}`;
+    const estimateCode = `ABW_${this.quotationCodes.toString().padStart(2, '0')}`;
     const total = this.total;
 
     const documentDefinition = {
@@ -101,7 +107,7 @@ export class CreateQuotationComponent {
               width: 'auto',
               stack: [
                 { text: `Estimate No: ${estimateCode}`, alignment: 'right' },
-                { text: `Date: ${new Date().toLocaleDateString('en-GB')}`, alignment: 'right' }
+                { text: `Date: ${this.finalQuotationDate || new Date().toLocaleDateString('en-GB')}`, alignment: 'right' }
               ]
             }
           ],
@@ -245,8 +251,8 @@ export class CreateQuotationComponent {
       }
     };
 
-    const safeCompanyName = this.customer.companyName.toUpperCase().replace(/\s+/g, '_');
-    const fileName = `${safeCompanyName}_Quotation_${estimateCode}.pdf`;
+    const safeCompanyName = this.customer.companyName.toLowerCase().replace(/\s+/g, '_');
+    const fileName = `${safeCompanyName}_quotation_${estimateCode}.pdf`;
     pdfMake.createPdf(documentDefinition).download(fileName);
   }
 }

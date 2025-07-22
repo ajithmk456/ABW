@@ -1,7 +1,28 @@
 <div class="quotation-container">
   <h2>Create Quotation</h2>
   <form #quotationForm="ngForm">
+      <!-- Invoice Date Section -->
+      <div class="section">
+        <div class="form-row" >
+          <div class="form-group with-icon">
+            <label>Invoice Date:</label>
+            <div class="input-icon">
+              <i class="fas fa-calendar-alt"></i>
+              <input type="date" [(ngModel)]="selectedDate" name="selectedDate" (change)="onDateChange()" />
+            </div>
+          </div>
 
+          <div class="form-group with-icon">
+            <label>Invoice Number:</label>
+            <div class="input-icon">
+              <i class="fas fa-file-invoice"></i>
+              <input type="text" [(ngModel)]="quotationCodes" name="invoiceCode" />
+            </div>
+          </div>
+
+
+        </div>
+      </div>
     <!-- Customer Info -->
     <div class="section">
       <div class="form-row">
